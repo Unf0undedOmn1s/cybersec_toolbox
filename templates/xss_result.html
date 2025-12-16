@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Demo Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main id="content" style="padding: 100px;">
+        <div class="code-example {{ status_class }}" style="max-width: 800px; margin: auto;">
+            <h1 style="text-shadow: none;">{{ title }}</h1>
+            
+            <p><strong>Input Received:</strong></p>
+            {% if status_class == 'vulnerable' %}
+                <div class="code-example vulnerable">
+                    <h3>Output (VULNERABLE)</h3>
+                    <pre style="color: var(--color-text-light);">{{ comment | safe }}</pre>
+                    <p>The <code>| safe</code> filter (or similar bad practice) was used, allowing the HTML/Script to execute.</p>
+                </div>
+            {% else %}
+                <div class="code-example secure">
+                    <h3></h3> Output (SECURE - HTML Encoded)</h3>
+                    <pre style="color: var(--color-text-light);">{{ comment }}</pre>
+                    <p>Jinja2's default auto-escaping converted <code>&lt;script&gt;</code> to <code>&amp;lt;script&amp;gt;</code>, rendering it harmless text.</p>
+                </div>
+            {% endif %}
+
+            <a href="{{ url_for('index') }}#xss" class="secure-btn" style="display: inline-block; margin-top: 20px;">&lt;&lt; Back to XSS Module</a>
+        </div>
+    </main>
+</body>
+</html>

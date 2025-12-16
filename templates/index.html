@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensive Cybersecurity Toolbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Simple styling for the demo grid, you can add this to your style.css too */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .demo-card {
+            padding: 20px;
+            border: 1px solid rgba(0, 224, 255, 0.2);
+            border-radius: 5px;
+            background-color: var(--color-bg-secondary);
+        }
+    </style>
+</head>
+<body>
+    <aside id="sidebar">
+        <h2>TOOLBOX <span>DASHBOARD</span></h2>
+        <a href="#injection" class="active">A03: Injection (SQLi)</a>
+        <a href="#xss">A07: Cross-Site Scripting (XSS)</a>
+        </aside>
+
+    <main id="content">
+        <section id="injection">
+            <h1>A03: Injection (SQL Injection)</h1>
+            <p>Injection flaws occur when user-supplied data is not properly validated or sanitized and is sent to an interpreter (like a database or system shell) as part of a command or query. SQL Injection is the most common form.</p>
+            
+
+            <h3 style="color: var(--color-accent-blue);">The Three Common Attack Patterns</h3>
+            <hr>
+
+            <h4>1. Tautology (Bypass Authentication)</h4>
+            <p>The goal is to trick the database into evaluating a condition that is always TRUE (a Tautology), often used to bypass login screens without a password. The classic input is <code>' OR 1=1 --</code> (note the space before `--` may be required).</p>
+            <div class="code-example vulnerable">
+                <h3>❌ Vulnerable Logic (Example)</h3>
+                <pre><code>query = "SELECT * FROM users WHERE username = '" + user_input + "' AND password = 'secret';"</code></pre>
+                <p>If <code>user_input</code> is the attack string, the query executed by the database becomes:</p>
+                <pre style="color: yellow;"><code>SELECT * FROM users WHERE username = '' OR 1=1 --' AND password = 'secret';</code></pre>
+            </div>
+
+            <h4>2. UNION Attack (Extract Data)</h4>
+            <p>Attackers use the <code>UNION</code> command to append the results of a totally different query (e.g., extracting sensitive data from other tables) to the results of the original, legitimate query.</p>
+            <div class="code-example vulnerable">
+                <h3>❌ Vulnerable Logic (Example)</h3>
+                <pre><code>query = "SELECT product_name, price FROM products WHERE id = " + user_input + ";"</code></pre>
+                <p>Attack Input Example: <code>1 UNION SELECT username, secret FROM users --</code></p>
+            </div>
+
+            <h4>3. Time-Based Blind SQLi (Inference)</h4>
+            <p>If the application doesn't return data or errors, attackers can still infer data by having the database perform a slow operation (like <code>SLEEP(5)</code>) based on a condition. If the page takes 5 seconds to load, the condition was TRUE.</p>
+            <div class="code-example vulnerable">
+                <h3>❌ Vulnerable Logic (Example)</h3>
+                <pre><code>query = "SELECT * FROM products WHERE id = " + user_input + ";"</code></pre>
+                <p>Attack Input Example: <code>1 AND (SELECT 1 FROM users WHERE username='admin' AND SUBSTR(secret,1,1)='T' AND (SELECT SLEEP(5)))</code></p>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--color-accent-green);">The Universal Defense: Prepared Statements</h3>
+            <p>Prepared Statements (or parameterized queries) are the **only reliable way** to prevent all forms of SQL Injection. They force the database driver to treat all user input as **data** and not as part of the executable **command**.</p>
+
+            <div class="code-example secure">
+                <h3>✅ Secure Logic (The Defense)</h3>
+                <pre><code>query = "SELECT secret FROM users WHERE username = ?;"
+cursor.execute(query, (user_input,))</code></pre>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--color-accent-blue);">Defensive Demonstration: The Difference</h3>
+
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h4>Vulnerable Login Form (Concatenation)</h4>
+                    <form method="POST" action="/vulnerable_login">
+                        <input type="text" name="username" placeholder="Try ' OR 1=1 --" required>
+                        <button type="submit" class="vulnerable-btn">Submit (Vulnerable)</button>
+                    </form>
+                </div>
+                
+                <div class="demo-card">
+                    <h4>Secure Login Form (Prepared Statement)</h4>
+                    <form method="POST" action="/secure_login">
+                        <input type="text" name="username" placeholder="Try ' OR 1=1 --" required>
+                        <button type="submit" class="secure-btn">Submit (Secure)</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <section id="xss">
+            <h1>A07: Cross-Site Scripting (XSS)</h1>
+            <p>XSS flaws occur when an application includes **untrusted data** in its output without proper validation or encoding. This allows an attacker to inject client-side scripts (like JavaScript) into the web page, executing malicious code in a victim's browser.</p>
+            
+
+            <h3 style="color: var(--color-accent-blue);">The Three Types of XSS</h3>
+            <hr>
+
+            <h4>1. Stored XSS (Persistent)</h4>
+            <p>The malicious script is permanently stored on the target server (e.g., in a database, a comment field, or a user profile). When any victim views that stored page, the script is executed.</p>
+
+            <h4>2. Reflected XSS (Non-Persistent)</h4>
+            <p>The malicious script is reflected off a web application, often through an error message, search result, or any data sent in an HTTP request. The attacker must trick the victim into clicking a specially crafted link.</p>
+
+            <h4>3. DOM-based XSS</h4>
+            <p>The vulnerability exists purely in the client-side code (JavaScript) when the application writes user-controlled data into the Document Object Model (DOM) in an unsafe way (e.g., using <code>innerHTML</code>).</p>
+            
+            <hr>
+            <h3 style="color: var(--color-accent-green);">The Universal Defense: Output Encoding</h3>
+            <p>To prevent XSS, you must **treat all user input as data, never as code**. The most effective method is **Output Encoding** (also known as HTML Encoding). This converts dangerous characters like <code>&lt;</code> and <code>&gt;</code> into their harmless HTML entity equivalents (<code>&amp;lt;</code> and <code>&amp;gt;</code>) before rendering.</p>
+
+            <div class="code-example secure">
+                <h3>✅ Secure Logic (The Defense)</h3>
+                <p>Modern frameworks like Flask/Jinja2 enable **Auto-Escaping** by default. Ensure you **never** disable this feature or use the <code>| safe</code> filter on user input.</p>
+                <pre><code>// Jinja2 is implicitly doing this conversion:
+input: &lt;script&gt;alert(1)&lt;/script&gt;
+output: &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;</code></pre>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--color-accent-blue);">Defensive Demonstration: Input Encoding</h3>
+            <p>Use the XSS payload: <code>&lt;script&gt;alert('XSS Attack!')&lt;/script&gt;</code> to test the difference.</p>
+
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h4>Vulnerable Comment Form (Using | safe)</h4>
+                    <form method="POST" action="/vulnerable_xss">
+                        <input type="text" name="comment" placeholder="Enter XSS payload here..." required>
+                        <button type="submit" class="vulnerable-btn">Submit (Vulnerable)</button>
+                    </form>
+                </div>
+                
+                <div class="demo-card">
+                    <h4>Secure Comment Form (Auto-Escaping)</h4>
+                    <form method="POST" action="/secure_xss">
+                        <input type="text" name="comment" placeholder="Enter XSS payload here..." required>
+                        <button type="submit" class="secure-btn">Submit (Secure)</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</body>
+</html>

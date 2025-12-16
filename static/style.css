@@ -1,0 +1,114 @@
+/* --- 1. Global Reset & Typography --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+:root {
+    /* Define color variables for easy modification */
+    --color-bg-primary: #121212; /* Deep Black/Gray */
+    --color-bg-secondary: #1e1e1e; /* Darker Section Background */
+    --color-text-light: #e0e0e0;
+    --color-accent-blue: #00e0ff; /* Neon Blue */
+    --color-accent-red: #ff3366; /* Neon Red for Errors/Vulnerable */
+    --color-accent-green: #39ff14; /* Neon Green for Success/Secure */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    font-family: 'Roboto Mono', monospace; /* Monospaced for tech look */
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-light);
+    min-height: 100vh;
+}
+
+h1, h2, h3 {
+    color: var(--color-accent-blue);
+    border-bottom: 2px solid rgba(0, 224, 255, 0.3); /* Subtle blue underline */
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+}
+
+p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* --- 2. Sidebar (Navigation) --- */
+#sidebar {
+    width: 280px;
+    background-color: var(--color-bg-secondary);
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+    padding: 30px 0;
+    flex-shrink: 0; /* Prevents sidebar from shrinking */
+}
+
+#sidebar a {
+    display: block;
+    padding: 12px 30px;
+    text-decoration: none;
+    color: var(--color-text-light);
+    transition: background-color 0.3s, color 0.3s;
+    border-left: 3px solid transparent; /* Prepare for active state line */
+}
+
+#sidebar a:hover {
+    background-color: rgba(0, 224, 255, 0.1); /* Light glow on hover */
+    color: var(--color-accent-blue);
+}
+
+#sidebar a.active {
+    background-color: rgba(0, 224, 255, 0.2);
+    color: var(--color-accent-blue);
+    font-weight: bold;
+    border-left: 3px solid var(--color-accent-blue); /* Neon active line */
+}
+
+/* --- 3. Main Content Area --- */
+#content {
+    flex-grow: 1;
+    padding: 50px;
+    /* Simulate a slight grid background texture if desired */
+    background-image: linear-gradient(0deg, transparent 99%, rgba(255, 255, 255, 0.05) 100%),
+                      linear-gradient(90deg, transparent 99%, rgba(255, 255, 255, 0.05) 100%);
+    background-size: 50px 50px;
+}
+
+/* --- 4. Code Snippets & Examples --- */
+.code-example {
+    margin: 30px 0;
+    padding: 20px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.code-example h3 {
+    margin-top: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+pre {
+    background-color: #0d0d0d; /* Even darker background for code */
+    padding: 15px;
+    overflow-x: auto;
+    border-radius: 3px;
+    border-top: 2px solid; /* Use color for the status */
+}
+
+/* --- 5. Status Colors (Vulnerable vs. Secure) --- */
+.vulnerable pre {
+    color: var(--color-accent-red);
+    border-top-color: var(--color-accent-red);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5); /* Glowing effect */
+}
+
+.secure pre {
+    color: var(--color-accent-green);
+    border-top-color: var(--color-accent-green);
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3); /* Glowing effect */
+}
