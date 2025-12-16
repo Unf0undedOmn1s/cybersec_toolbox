@@ -1,14 +1,16 @@
-/* --- 1. Global Reset & Typography --- */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
 :root {
-    /* Define color variables for easy modification */
-    --color-bg-primary: #121212; /* Deep Black/Gray */
-    --color-bg-secondary: #1e1e1e; /* Darker Section Background */
-    --color-text-light: #e0e0e0;
-    --color-accent-blue: #00e0ff; /* Neon Blue */
-    --color-accent-red: #ff3366; /* Neon Red for Errors/Vulnerable */
-    --color-accent-green: #39ff14; /* Neon Green for Success/Secure */
+    --color-bg-primary: #0a0a0f;
+    --color-bg-secondary: #13151f;
+    --color-text-light: #eef2ff;
+    --color-accent-blue: #00d9ff;
+    --color-accent-red: #ff2e63;
+    --color-accent-green: #0af56d;
+    
+    --glow-blue: 0 0 15px rgba(0, 217, 255, 0.7);
+    --glow-red: 0 0 15px rgba(255, 46, 99, 0.7);
+    --glow-green: 0 0 15px rgba(10, 245, 109, 0.7);
 }
 
 * {
@@ -18,8 +20,7 @@
 }
 
 body {
-    display: flex;
-    font-family: 'Roboto Mono', monospace; /* Monospaced for tech look */
+    font-family: 'Roboto Mono', monospace;
     background-color: var(--color-bg-primary);
     color: var(--color-text-light);
     min-height: 100vh;
@@ -27,9 +28,15 @@ body {
 
 h1, h2, h3 {
     color: var(--color-accent-blue);
-    border-bottom: 2px solid rgba(0, 224, 255, 0.3); /* Subtle blue underline */
+    text-shadow: var(--glow-blue);
+    border-bottom: 2px solid rgba(0, 224, 255, 0.3);
     padding-bottom: 8px;
     margin-bottom: 20px;
+}
+
+h4 {
+    color: var(--color-text-light);
+    margin-bottom: 10px;
 }
 
 p {
@@ -37,53 +44,89 @@ p {
     margin-bottom: 15px;
 }
 
-/* --- 2. Sidebar (Navigation) --- */
+hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 25px 0;
+}
+
 #sidebar {
-    width: 280px;
+    width: 300px;
     background-color: var(--color-bg-secondary);
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5); /* Shadow for depth */
     padding: 30px 0;
-    flex-shrink: 0; /* Prevents sidebar from shrinking */
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+}
+
+#sidebar h2 {
+    text-align: center;
+    border-bottom: none;
+    padding: 0 20px 20px;
+    margin-bottom: 30px;
+    font-size: 1.6em;
+    color: var(--color-text-light);
+}
+
+#sidebar h2 span {
+    color: var(--color-accent-blue);
+    text-shadow: var(--glow-blue);
 }
 
 #sidebar a {
-    display: block;
-    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    padding: 14px 30px;
     text-decoration: none;
     color: var(--color-text-light);
-    transition: background-color 0.3s, color 0.3s;
-    border-left: 3px solid transparent; /* Prepare for active state line */
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    margin-bottom: 5px;
+    gap: 12px;
 }
 
 #sidebar a:hover {
-    background-color: rgba(0, 224, 255, 0.1); /* Light glow on hover */
+    background-color: rgba(0, 217, 255, 0.1);
     color: var(--color-accent-blue);
+    padding-left: 35px;
 }
 
 #sidebar a.active {
-    background-color: rgba(0, 224, 255, 0.2);
+    background-color: rgba(0, 217, 255, 0.2);
     color: var(--color-accent-blue);
     font-weight: bold;
-    border-left: 3px solid var(--color-accent-blue); /* Neon active line */
+    border-left: 3px solid var(--color-accent-blue);
+    box-shadow: var(--glow-blue);
 }
 
-/* --- 3. Main Content Area --- */
 #content {
-    flex-grow: 1;
-    padding: 50px;
-    /* Simulate a slight grid background texture if desired */
-    background-image: linear-gradient(0deg, transparent 99%, rgba(255, 255, 255, 0.05) 100%),
-                      linear-gradient(90deg, transparent 99%, rgba(255, 255, 255, 0.05) 100%);
+    margin-left: 300px;
+    padding: 40px;
+    min-height: 100vh;
+    background-image: 
+        linear-gradient(0deg, transparent 99%, rgba(0, 224, 255, 0.05) 100%),
+        linear-gradient(90deg, transparent 99%, rgba(0, 224, 255, 0.05) 100%);
     background-size: 50px 50px;
 }
 
-/* --- 4. Code Snippets & Examples --- */
+#content section {
+    margin-bottom: 60px;
+    padding: 30px;
+    background: rgba(26, 29, 43, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
 .code-example {
     margin: 30px 0;
-    padding: 20px;
-    border-radius: 4px;
+    padding: 25px;
+    border-radius: 8px;
     font-size: 0.9em;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    background: rgba(13, 13, 13, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .code-example h3 {
@@ -93,22 +136,98 @@ p {
 }
 
 pre {
-    background-color: #0d0d0d; /* Even darker background for code */
-    padding: 15px;
+    background-color: rgba(13, 13, 13, 0.9);
+    padding: 20px;
     overflow-x: auto;
-    border-radius: 3px;
-    border-top: 2px solid; /* Use color for the status */
+    border-radius: 6px;
+    border-top: 3px solid;
+    margin-top: 15px;
+    font-family: 'Roboto Mono', monospace;
 }
 
-/* --- 5. Status Colors (Vulnerable vs. Secure) --- */
 .vulnerable pre {
     color: var(--color-accent-red);
     border-top-color: var(--color-accent-red);
-    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5); /* Glowing effect */
+    box-shadow: var(--glow-red);
 }
 
 .secure pre {
     color: var(--color-accent-green);
     border-top-color: var(--color-accent-green);
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.3); /* Glowing effect */
+    box-shadow: var(--glow-green);
+}
+
+input[type="text"] {
+    background-color: rgba(13, 13, 13, 0.8);
+    color: var(--color-accent-green);
+    border: 1px solid var(--color-accent-blue);
+    padding: 12px 15px;
+    margin-right: 10px;
+    border-radius: 6px;
+    font-family: 'Roboto Mono', monospace;
+    width: 300px;
+    box-shadow: var(--glow-blue);
+    font-size: 0.9em;
+}
+
+button {
+    padding: 12px 20px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
+}
+
+.vulnerable-btn {
+    background-color: var(--color-accent-red);
+    color: var(--color-bg-primary);
+}
+
+.vulnerable-btn:hover {
+    background-color: #ff4d7e;
+    box-shadow: var(--glow-red);
+    transform: translateY(-2px);
+}
+
+.secure-btn {
+    background-color: var(--color-accent-green);
+    color: var(--color-bg-primary);
+}
+
+.secure-btn:hover {
+    background-color: #2dff8d;
+    box-shadow: var(--glow-green);
+    transform: translateY(-2px);
+}
+
+.demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.demo-card {
+    padding: 25px;
+    border: 1px solid rgba(0, 224, 255, 0.2);
+    border-radius: 8px;
+    background-color: rgba(26, 29, 43, 0.9);
+    transition: all 0.3s ease;
+}
+
+.demo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+code {
+    background: rgba(0, 217, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--color-accent-blue);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
 }
